@@ -1,4 +1,15 @@
+"""
+Modificar el programa para:
+
+Buscar usuarios.
+Evitar usuarios duplicados.
+Validar un archivo al momento de leerlo y en caso de errores mortralos
+Crear archivo de errores. Meter los datos buenos en un archivo y los malos en otro
+Registrar fecha y hora de creación.
+"""
 ARCHIVO = "usuarios.txt"
+
+from datetime import datetime
 
 def registrar_usuario():
     try:
@@ -7,18 +18,33 @@ def registrar_usuario():
         if nombre == "":
             print("El nombre no puede estar vacío.")
             return
+
+        with open(ARCHIVO, "r", encoding="utf-8") as archivo:
+            lineas = archivo.readlines()
+
+            for linea in lineas:
+                nombre_archivo, edad_archivo, fecha_hora_archivo = linea.strip().split(",")
+
+                if nombre.lower() == nombre_archivo.lower():
+                    print("El usuario ya se encuentra registrado")
+                    return
+
         edad = int(input("Ingrese la edad del usuario:"))
 
         if edad < 0:
             print("La edad no puede ser negativa.")
             return
+
+        fecha_hora = datetime.now()  # Obtener la fecha y hora actual
+
         with open(ARCHIVO, "a", encoding="utf-8") as archivo:
-            archivo.write(f"{nombre},{edad}\n")
+            archivo.write(f"{nombre},{edad},{fecha_hora}\n")
+
         print("Usuario registrado exitosamente.")
-    
+
     except ValueError:
         print("La edad debe de ser numérica")
-    
+
     except PermissionError:
         print("No se tienen permisos para escribir en el archivo.")
 
@@ -37,8 +63,8 @@ def mostrar_usuarios():
             print("\nUsuarios registrados:")
 
             for linea in lineas:
-                nombre, edad = linea.strip().split(",")
-                print(f"Nombre: {nombre}, Edad: {edad}")
+                nombre, edad, fecha_hora= linea.strip().split(",")
+                print(f"Nombre: {nombre}, Edad: {edad}, Fecha y hora: {fecha_hora}")
 
     except FileNotFoundError:
         print("No se encontró el archivo de usuarios")
