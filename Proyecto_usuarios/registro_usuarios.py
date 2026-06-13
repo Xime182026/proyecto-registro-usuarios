@@ -74,15 +74,50 @@ def mostrar_usuarios():
 
     except Exception as error:
         print(f"Ocurrió un error inesperado: {error}")
+        
+def validar_archivo():
+    try:
+        with open("usuarios_pruebas.txt", "r", encoding="utf-8") as archivo:
+            lineas = archivo.readlines()    
+        for linea in lineas:
+            nombre, edad,  fecha_hora = linea.strip().split(",")
+            edad = int(edad)
+            
+            if nombre == "":
+                with open("usuarios_errores.txt", "a", encoding="utf-8") as archivo_errores:
+                    archivo_errores.write(linea)
+                continue
+                    
+            if edad < 0:
+                with open("usuarios_errores.txt", "a", encoding="utf-8") as archivo_errores:
+                    archivo_errores.write(linea)
+                continue
 
+            if edad > 120:
+                with open("usuarios_errores.txt", "a", encoding="utf-8") as archivo_errores:
+                    archivo_errores.write(linea)
+                continue
+
+            with open("usuarios_buenos.txt", "a", encoding="utf-8") as archivo_buenos:
+                archivo_buenos.write(linea)
+
+        print("Validación completada.")
+                
+    except FileNotFoundError:
+        print("No se encontro el archivo de pruebas. ")
+    except ValueError:
+        print("La edad debe ser numérica.")
+       
 def menu():
     opcion = ""
-    while opcion != "3":
+    while opcion != "4":
 
         print("\n ==== USUARIOS ====")
         print("1. Registrar usuario")
         print("2. Mostrar usuarios")
-        print("3. Salir")
+        print("3. Validar archivo")
+        print("4. Salir") 
+       
 
         opcion = input("Seleccione una opción: ")
 
@@ -91,10 +126,11 @@ def menu():
         elif opcion == "2":
             mostrar_usuarios()
         elif opcion == "3":
-            print("Programa finalizado.")
+            validar_archivo()
+        elif opcion == "4":
+           print("Programa finalizado.")
         else:
-            print("Opción no válida. Intente nuevamente.")
-
+           print("Opción no válida. Intente nuevamente.")
 menu()
 
 
